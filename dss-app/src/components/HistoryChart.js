@@ -8,55 +8,35 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 // let prices = {}
-import { cryptoList, prices } from "../utils/socket";
+import { cryptoList, prices, getHistoricalPriceData } from "../utils/socket";
 
 let chart;
 
-async function getBitcoinPriceData(cryptoName, currency = 'usd') {
-    // const apiKey = 'YOUR_API_KEY'; // 替换为您的 CoinGecko API 密钥
-    let startDate = '2022-01-01'; // 开始日期
-    let endDate = '2022-06-30';   // 结束日期
+window.getHistoricalPriceData = getHistoricalPriceData;
 
-    try {
-        return Promise.all(cryptoName.map(item => fetch(`https://api.coingecko.com/api/v3/coins/${item}/market_chart/range?vs_currency=${currency}&from=${Math.floor(new Date(startDate).getTime() / 1000)}&to=${Math.floor(new Date(endDate).getTime() / 1000)}`, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then(res => res.json())
-        .then(jsonItem => {
-            return {
-                labels: jsonItem.prices.map(item => new Date(item[0]).toLocaleDateString()), // timestamp to date
-                data: jsonItem.prices.map(item => item[1]),
-            }
-        })))
-        // const response = await fetch(`https://api.coingecko.com/api/v3/coins/${coin}/market_chart/range?vs_currency=${currency}&from=${Math.floor(new Date(startDate).getTime() / 1000)}&to=${Math.floor(new Date(endDate).getTime() / 1000)}`, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // });
 
-        // const data = await response.json();
 
-        // return {
-        //     labels: data.prices.map(item => new Date(item[0]).toLocaleDateString()), // 时间戳转换为日期字符串
-        //     prices: data.prices.map(item => item[1]),
-        // };
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
-
-window.getBitcoinPriceData = getBitcoinPriceData;
-
-function HistoricalChart() {
+function HistoricalChart(props) {
     // const [prices, setPrices] = useState({});
     const [cryptoName, setCryptoName] = useState([cryptoList[0]]);
 
 
+    async function refreshChart(values) {
+        if (!values) values = cryptoName;
+        const res = await getHistoricalPriceData(values, props.currency);
+        console.log(values, res);
+        chart && (chart.data.datasets = res.map((item, index) => {
+            item.label = values[index];
+            return item;
+        }));
+        chart.data.labels = values;
+        chart.update();
+    }
+
     useEffect(() => {
         const ctx = document.getElementById('bitcoinChart').getContext('2d');
         async function fetchData() {
-            const bitcoinPriceData = await getBitcoinPriceData(cryptoName);
+            const bitcoinPriceData = await getHistoricalPriceData(cryptoName,props.currency);
             return bitcoinPriceData;
           }
         
@@ -107,19 +87,10 @@ function HistoricalChart() {
         }
     }, []);
 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         chart.data.labels = cryptoName;
-    //         chart.data.datasets[0].data = cryptoName.map(name => {
-    //             return prices[name]?.price;
-    //         });
-    //         chart.update();
-    //     }, 1000);
-
-    //     return () => {
-    //         clearInterval(interval);
-    //     }
-    // }, [cryptoName])
+    useEffect(() => {
+        console.log('hsitorical currency changed');
+        refreshChart(cryptoName);
+    }, [props.currency]);
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -144,15 +115,7 @@ function HistoricalChart() {
             // On autofill we get a stringified value.
             values
         );
-        const res = await getBitcoinPriceData(values);
-        console.log(values, res);
-        chart && (chart.data.datasets = res.map((item, index) => {
-            item.label = value[index];
-            return item;
-        }));
-        chart.data.labels = values;
-        chart.update();
-        console.log(chart.data.datasets);
+        refreshChart(values);
     };
 
     return (

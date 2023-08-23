@@ -8,14 +8,25 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 // let prices = {}
-import { cryptoList, prices } from "../utils/socket";
+import { cryptoList, getCurrentPrice, prices } from "../utils/socket";
 
 let chart;
 
-function CryptoChart() {
+function CryptoChart(props) {
   // const [prices, setPrices] = useState({});
   const [cryptoName, setCryptoName] = useState(cryptoList);
 
+
+  async function updateChart(request) {
+    if (request) {
+      await getCurrentPrice(props.currency);
+    }
+    chart.data.labels = cryptoName;
+    chart.data.datasets[0].data = cryptoName.map(name => {
+      return prices[name]?.price;
+    });
+    chart.update();
+  }
 
   useEffect(() => {
     const ctx = document.getElementById('chart');
@@ -95,18 +106,27 @@ function CryptoChart() {
   }, []);
 
   useEffect(() => {
+    setTimeout(() => {
+      updateChart();
+    }, 200);
+
     const interval = setInterval(() => {
-      chart.data.labels = cryptoName;
-      chart.data.datasets[0].data = cryptoName.map(name => {
-        return prices[name]?.price;
-      });
-      chart.update();
-    }, 1000);
+      updateChart();
+    }, 30*1000);
+
+    console.log('set interval', interval);
   
     return () => {
+      console.log('clear interval:', interval);
       clearInterval(interval);
     }
   }, [cryptoName])
+
+  useEffect(() => {
+    setTimeout(() => {
+      updateChart(true);
+    }, 200);
+  }, [props.currency])
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

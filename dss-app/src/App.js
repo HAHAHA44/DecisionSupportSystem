@@ -26,6 +26,13 @@ import {
 import HistoricalChart from './components/HistoryChart';
 import OHLCChart from './components/OHLC';
 import { getBasicData, basicData } from './utils/socket';
+import IconButton from '@mui/material/IconButton';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
+import { Container } from '@mui/material';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import * as React from 'react';
+import {currencies, getCurrentPrice} from './utils/socket';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -36,12 +43,9 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const breadcrumbNameMap = {
-  '/price': 'Price',
-  '/OHLC': 'OHLC',
-  '/price/important': 'Important',
-  '/trend': 'Trend',
-  '/spam': 'Spam',
-  '/drafts': 'Drafts',
+  '/Current Price': 'Current Price',
+  '/Crypto Detail': 'Crypto Detail',
+  '/Historical Price': 'Historical Price',
 };
 
 function ListItemLink(props) {
@@ -102,13 +106,53 @@ function Page() {
 
 function App() {
   const [open, setOpen] = useState(true);
+  const [currentCurrency, setCurrentCurrency] = useState('usd');
 
-  const handleClick = () => {
-    setOpen((prevOpen) => !prevOpen);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const opencrcmenu = Boolean(anchorEl);
+
+  const handleClickCrcMenu = (event) => {
+    setAnchorEl(event.currentTarget);
   };
 
+  const handleChooseCrcMenu = (crc) => {
+    console.log(crc);
+    if (typeof crc === 'string') {
+      setCurrentCurrency(crc);
+      // getCurrentPrice(crc);
+    }
+    setAnchorEl(null);
+  };
+
+
   return (
-    <div className="App">
+    <div id="dss-app">
+      <Box sx={{position: 'fixed', right : 10, top: 10}}>
+        {currentCurrency.toUpperCase()}
+        <IconButton 
+          aria-label="delete" 
+          aria-controls={opencrcmenu ? 'basic-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={opencrcmenu ? 'true' : undefined}
+          onClick={handleClickCrcMenu}
+        >
+          <CurrencyExchangeIcon />
+        </IconButton>
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={opencrcmenu}
+          onClose={handleChooseCrcMenu}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          {currencies.map((item) => <MenuItem key={item} onClick={() => {handleChooseCrcMenu(item)}}>{item.toUpperCase()}</MenuItem>)}
+          
+          {/* <MenuItem onClick={handleChooseCrcMenu}>My account</MenuItem>
+          <MenuItem onClick={handleChooseCrcMenu}>Logout</MenuItem> */}
+        </Menu>
+      </Box>
       <MemoryRouter initialEntries={['/price']} initialIndex={0}>
       <Grid container spacing={2}>
         <Grid item xs={2}>
@@ -126,7 +170,7 @@ function App() {
                 aria-label="mailbox folders"
               >
                 <List>
-                  <ListItemLink to="/price"
+                  <ListItemLink to="/Current Price"
                   //  open={open} onClick={handleClick} 
                   />
                   {/* <Collapse component="li" in={open} timeout="auto" unmountOnExit>
@@ -134,8 +178,8 @@ function App() {
                       <ListItemLink sx={{ pl: 4 }} to="/price/important" />
                     </List>
                   </Collapse> */}
-                  <ListItemLink to="/trend" />
-                  <ListItemLink to="/OHLC" />
+                  <ListItemLink to="/Historical Price" />
+                  <ListItemLink to="/Crypto Detail" />
                   {/* <ListItemLink to="/spam" /> */}
                 </List>
               </Box>
@@ -145,9 +189,9 @@ function App() {
         <Grid item xs={10}>
           <Item>
             <Routes>
-              <Route path="/trend" element={<HistoricalChart></HistoricalChart>} />
-              <Route path="/OHLC" element={<OHLCChart></OHLCChart>} />
-              <Route path="/price" element={<CryptoChart></CryptoChart>} />
+              <Route path="/Historical Price" element={<HistoricalChart currency={currentCurrency}></HistoricalChart>} />
+              <Route path="/Crypto Detail" element={<OHLCChart currency={currentCurrency}></OHLCChart>} />
+              <Route path="/Current Price" element={<CryptoChart currency={currentCurrency}></CryptoChart>} />
             </Routes>
           </Item>
         </Grid>

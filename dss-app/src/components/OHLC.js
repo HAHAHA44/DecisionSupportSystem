@@ -7,9 +7,10 @@ import ListItemText from '@mui/material/ListItemText';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 // let prices = {}
-import { basicData, cryptoList, prices } from "../utils/socket";
+import { basicData, cryptoList, getBasicData, prices } from "../utils/socket";
 import * as echarts from 'echarts';
 import { Box, Typography } from "@mui/material";
+import { getOHLCData } from '../utils/socket';
 
 let chart;
 const upColor = '#00da3c';
@@ -104,7 +105,7 @@ const CharacterList = [
   
 ]
 
-function OHLCChart() {
+function CryptoDetailChart(props) {
   // const [prices, setPrices] = useState({});
   const [symbol, setSymbol] = useState(cryptoList[0]);
   const [info, setInfo] = useState({});
@@ -118,11 +119,18 @@ function OHLCChart() {
     chart = drawOHLCChart(event.target.value);
   };
 
-  async function getOHLCData(symbol, currency='usd') {
+  
 
+  async function CoinAPIOHLC(symbol, currency='usd') {
     try {
+      var options = {
+        "method": "GET",
+        "hostname": "rest.coinapi.io",
+        "path": "/v1/ohlcv/periods",
+        "headers": {'X-CoinAPI-Key': '73034021-THIS-IS-SAMPLE-KEY'}
+      };
       // const response = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&from=${Math.floor(new Date(startDate).getTime() / 1000)}&to=${Math.floor(new Date(endDate).getTime() / 1000)}`);
-      const response = await fetch(`https://api.coingecko.com/api/v3/coins/${symbol}/ohlc?vs_currency=${currency}&days=max`);
+      const response = await fetch(`https://rest.coinapi.io/v1/ohlcv/BITSTAMP_SPOT_BTC_USD/history?period_id=1DAY&time_start=2020-01-01T00:00:00`);
       // const response = await fetch(`https://api.coincap.io/v2/candles?exchange=binance&interval=h8&baseId=btc&quoteId=usd&start=0&end=${new Date().getTime()}`);
       const data = await response.json();
 
@@ -405,15 +413,15 @@ function OHLCChart() {
   };
 
   useEffect(() => {
-    drawOHLCChart(symbol);
+    drawOHLCChart(symbol, props.currency);
     
-    setTimeout(() => {
-      setInfo(basicData.find(item => item.id === symbol));
-    }, 1000);
+    getBasicData(props.currency).then((data) => {
+      data && setInfo(data.find(item => item.id === symbol));
+    })
     return () => {
       chart && chart.dispose();
     }
-  }, []);
+  }, [props.currency]);
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -458,4 +466,4 @@ function OHLCChart() {
   );
 }
 
-export default OHLCChart;
+export default CryptoDetailChart;

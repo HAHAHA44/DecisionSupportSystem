@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { startPriceWs } from './utils/socket';
+import { getBasicData, startPriceWs, getCurrentPrice } from './utils/socket';
 
-startPriceWs();
+// startPriceWs();
+getCurrentPrice();
+getBasicData();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 // let prices = {}
