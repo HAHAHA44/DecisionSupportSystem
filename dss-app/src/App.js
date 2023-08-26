@@ -22,6 +22,7 @@ import {
   Routes,
   MemoryRouter,
   useLocation,
+  HashRouter,
 } from 'react-router-dom';
 import HistoricalChart from './components/HistoryChart';
 import OHLCChart from './components/OHLC';
@@ -130,7 +131,8 @@ function App() {
       <Box sx={{position: 'fixed', right : 10, top: 10}}>
         {currentCurrency.toUpperCase()}
         <IconButton 
-          aria-label="delete" 
+          className='crc-iconbuttion'
+          aria-label="crc-iconbuttion" 
           aria-controls={opencrcmenu ? 'basic-menu' : undefined}
           aria-haspopup="true"
           aria-expanded={opencrcmenu ? 'true' : undefined}
@@ -153,7 +155,7 @@ function App() {
           <MenuItem onClick={handleChooseCrcMenu}>Logout</MenuItem> */}
         </Menu>
       </Box>
-      <MemoryRouter initialEntries={['/price']} initialIndex={0}>
+      <HashRouter initialEntries={['/Current Price']} initialIndex={0}>
       <Grid container spacing={2}>
         <Grid item xs={2}>
           <Item>
@@ -202,7 +204,7 @@ function App() {
       {/* <header className="App-header">
         <canvas id="chart"></canvas>
       </header> */}
-      </MemoryRouter>
+      </HashRouter>
     </div>
   );
 }

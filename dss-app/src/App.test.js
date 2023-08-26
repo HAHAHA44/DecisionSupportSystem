@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App'; // Make sure to provide the correct path to your App component
+import * as NodeCanvas from 'canvas';
 
 class ResizeObserver {
   observe() {}
@@ -20,15 +21,51 @@ describe('App component', () => {
     expect(appElement).toBeInTheDocument();
   });
 
+  it('check the expected elements exist', () => {
+    render(<App />);
+
+    const currencyMenuButton = screen.getByLabelText('crc-iconbuttion');
+    expect(currencyMenuButton).toBeTruthy();
+    
+    const CurrentPrice = screen.getByText(/Current Price/i);
+    expect(CurrentPrice).toBeTruthy();
+
+    const HistoricalPrice = screen.getByText(/Historical Price/i);
+    expect(HistoricalPrice).toBeTruthy();
+
+    const CryptoDetail = screen.getByText(/Crypto Detail/i);
+    expect(CryptoDetail).toBeTruthy();
+  });
+
+  it('check the change unit currency button', () => {
+    render(<App />);
+
+    const currencyMenuButton = screen.getByLabelText('crc-iconbuttion');
+    fireEvent.click(currencyMenuButton);
+    
+    const GBPItem = screen.getByText(/GBP/i);
+    expect(GBPItem).toBeTruthy();
+
+    const CNYItem = screen.getByText(/CNY/i);
+    expect(CNYItem).toBeTruthy();
+
+    const EURItem = screen.getByText(/EUR/i);
+    expect(EURItem).toBeTruthy();
+
+    const JPYItem = screen.getByText(/JPY/i);
+    expect(JPYItem).toBeTruthy();
+  });
+
+
   it('updates the current currency when a currency is chosen from the menu', () => {
     render(<App />);
     
     // Open the currency menu
-    const currencyMenuButton = screen.getByLabelText('delete');
+    const currencyMenuButton = screen.getByLabelText('crc-iconbuttion');
     fireEvent.click(currencyMenuButton);
 
     // Choose a currency from the menu
-    const currencyOption = screen.getByText('EUR'); // Replace 'EUR' with an actual currency
+    const currencyOption = screen.getByText('EUR');
     userEvent.click(currencyOption);
 
     // Check if the current currency is updated
@@ -44,19 +81,54 @@ describe('App component', () => {
     expect(currencyMenu).not.toBeInTheDocument();
 
     // Open the currency menu
-    const currencyMenuButton = screen.getByLabelText('delete');
+    const currencyMenuButton = screen.getByLabelText('crc-iconbuttion');
     fireEvent.click(currencyMenuButton);
 
     // Check if the menu is open
     const openCurrencyMenu = screen.queryByRole('menu');
     expect(openCurrencyMenu).toBeInTheDocument();
+  });
 
-    // // Close the currency menu
-    // userEvent.click(screen.getByText('EUR')); // Replace 'EUR' with an actual currency to simulate a menu option click
+  it('Current Price page have canvas', () => {
+    render(<App />);
 
-    // // Check if the menu is closed again
-    // const closedCurrencyMenu = screen.queryByRole('menu');
-    // expect(closedCurrencyMenu).not.toBeInTheDocument();
+    const CurrentPrice = screen.getByText(/Current Price/i);
+    fireEvent.click(CurrentPrice);
+
+    let chart = document.getElementById('current-price-chart');
+    expect(chart).toBeInTheDocument();
+  });
+
+  it('historical Price page have canvas', () => {
+    render(<App />);
+
+    const CurrentPrice = screen.getByText(/Historical Price/i);
+    fireEvent.click(CurrentPrice);
+
+    let chart = document.getElementById('bitcoinChart');
+    expect(chart).toBeInTheDocument();
+  });
+
+  it('Crypto Detail page have canvas', () => {
+    render(<App />);
+
+    const CurrentPrice = screen.getByText(/Crypto Detail/i);
+    fireEvent.click(CurrentPrice);
+
+    let chart = document.getElementById('ohlcChart');
+    expect(chart).toBeInTheDocument();
+  });
+
+  it('Current Price page have crypto selector', () => {
+    render(<App />);
+
+    const Selector = screen.getByTestId('cp-multiple-checkbox-label');
+    fireEvent.click(Selector);
+
+    expect(screen.getByTestId('cp-multiple-checkbox-label')).toHaveTextContent('bitcoin');
+
+    // const currentCurrencyText = screen.getByTestId('celo-cp-menu-item');
+    // expect(currentCurrencyText).toBeInTheDocument();
   });
 
 });

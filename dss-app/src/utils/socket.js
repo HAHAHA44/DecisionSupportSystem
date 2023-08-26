@@ -69,7 +69,9 @@ export async function getBasicData(currency = 'usd') {
             headers: {
                 'Content-Type': 'application/json',
             },
-        }).then(res => res.json())
+        }).then(res => {
+          return res.json();
+        })
         .then(jsonItem => {
             return {
                 labels: jsonItem.prices.map(item => new Date(item[0]).toLocaleDateString()), // timestamp to date

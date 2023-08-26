@@ -29,7 +29,7 @@ function CryptoChart(props) {
   }
 
   useEffect(() => {
-    const ctx = document.getElementById('chart');
+    const ctx = document.getElementById('current-price-chart');
     chart = new Chart(ctx, {
       //Type of the chart
       type: 'line',
@@ -156,11 +156,12 @@ const MenuProps = {
   return (
     <div className="CryptoChart">
       <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel id="demo-multiple-checkbox-label">Cryptos</InputLabel>
+        <InputLabel id="cp-multiple-checkbox-label">Cryptos</InputLabel>
         <Select
-          labelId="demo-multiple-checkbox-label"
-          id="demo-multiple-checkbox"
+          labelId="cp-multiple-checkbox-label"
+          id="cp-multiple-checkbox"
           multiple
+          data-testid="cp-multiple-checkbox-label"
           value={cryptoName}
           onChange={handleChange}
           input={<OutlinedInput label="Cryptos" />}
@@ -168,7 +169,7 @@ const MenuProps = {
           MenuProps={MenuProps}
         >
           {cryptoList.map((name) => (
-            <MenuItem key={name} value={name}>
+            <MenuItem key={name} value={name} data-testid={name+'-cp-menu-item'}>
               <Checkbox checked={cryptoName.indexOf(name) > -1} />
               <ListItemText primary={name} />
             </MenuItem>
@@ -176,7 +177,7 @@ const MenuProps = {
         </Select>
       </FormControl>
       <header className="CryptoChart-header">
-        <canvas id="chart"></canvas>
+        <canvas id="current-price-chart"></canvas>
       </header>
     </div>
   );
