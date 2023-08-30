@@ -102,8 +102,8 @@ describe('App component', () => {
   it('historical Price page have canvas', () => {
     render(<App />);
 
-    const CurrentPrice = screen.getByText(/Historical Price/i);
-    fireEvent.click(CurrentPrice);
+    const HistoricalPrice = screen.getByText(/Historical Price/i);
+    fireEvent.click(HistoricalPrice);
 
     let chart = document.getElementById('bitcoinChart');
     expect(chart).toBeInTheDocument();
@@ -112,23 +112,49 @@ describe('App component', () => {
   it('Crypto Detail page have canvas', () => {
     render(<App />);
 
-    const CurrentPrice = screen.getByText(/Crypto Detail/i);
-    fireEvent.click(CurrentPrice);
+    const CryptoDetail = screen.getByText(/Crypto Detail/i);
+    fireEvent.click(CryptoDetail);
 
     let chart = document.getElementById('ohlcChart');
     expect(chart).toBeInTheDocument();
   });
 
   it('Current Price page have crypto selector', () => {
-    render(<App />);
+    const {getByTestId} = render(<App />);
+
+    const CurrentPrice = screen.getByText(/Current Price/i);
+    fireEvent.click(CurrentPrice);
 
     const Selector = screen.getByTestId('cp-multiple-checkbox-label');
     fireEvent.click(Selector);
 
     expect(screen.getByTestId('cp-multiple-checkbox-label')).toHaveTextContent('bitcoin');
+  });
 
-    // const currentCurrencyText = screen.getByTestId('celo-cp-menu-item');
-    // expect(currentCurrencyText).toBeInTheDocument();
+  it('Historical Price page have crypto selector', () => {
+    const {getByTestId} = render(<App />);
+
+    const HistoricalPrice = screen.getByText(/Historical Price/i);
+    fireEvent.click(HistoricalPrice);
+
+    const Selector = screen.getByTestId('cp-multiple-checkbox-label');
+    fireEvent.click(Selector);
+
+    expect(screen.getByTestId('cp-multiple-checkbox-label')).toHaveTextContent('bitcoin');
+  });
+
+  it('Crypto Detail page have crypto selector', () => {
+    const {getByTestId} = render(<App />);
+
+    const CryptoDetail = screen.getByText(/Crypto Detail/i);
+    fireEvent.click(CryptoDetail);
+
+    const Selector = screen.getByTestId('cp-simple-checkbox-label');
+    fireEvent.click(Selector);
+
+    expect(screen.getByTestId('cp-simple-checkbox-label')).toHaveTextContent('bitcoin');
+
+
   });
 
 });

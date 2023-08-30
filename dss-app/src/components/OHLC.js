@@ -439,14 +439,15 @@ function CryptoDetailChart(props) {
   return (
     <div className="CryptoChart">
       <FormControl sx={{ width: 300 }}>
-        <InputLabel id="demo-simple-select-label">Symbol</InputLabel>
+        <InputLabel id="cp-simple-select-label">Symbol</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="cp-simple-select-label"
+          id="cp-simple-select"
           value={symbol}
           label="symbol"
           onChange={handleChangeSelect}
           defaultValue={cryptoList[0]}
+          data-testid="cp-simple-checkbox-label"
         >
           {cryptoList.map(item => <MenuItem value={item}>{item}</MenuItem>)}
         </Select>
@@ -456,7 +457,7 @@ function CryptoDetailChart(props) {
       </header>
       {
         info && info.id && 
-        <Box sx={{ m: 2 }}>
+        <Box sx={{ m: 2 }} data-testid="text-box">
           {CharacterList.map(item => (<Fragment><Typography color={'blue'} variant="subtitle" gutterBottom> {item.name}</Typography><Typography gutterBottom  variant="subtitle">: {info[item.value] + item.suffix} </Typography><div></div></Fragment>))}
           {/* <Typography variant="subtitle" gutterBottom>: {info.ath} </Typography>
           <Typography variant="subtitle" gutterBottom>All-Time High change percentage: {info.ath_change_percentage}%</Typography> */}

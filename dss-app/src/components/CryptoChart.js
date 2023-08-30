@@ -156,7 +156,7 @@ const MenuProps = {
   return (
     <div className="CryptoChart">
       <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel id="cp-multiple-checkbox-label">Cryptos</InputLabel>
+        <InputLabel id="cp-multiple-checkbox-input">Cryptos</InputLabel>
         <Select
           labelId="cp-multiple-checkbox-label"
           id="cp-multiple-checkbox"

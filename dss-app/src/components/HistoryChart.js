@@ -131,6 +131,7 @@ function HistoricalChart(props) {
                     input={<OutlinedInput label="Cryptos" />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
+                    data-testid="cp-multiple-checkbox-label"
                 >
                     {cryptoList.map((name) => (
                         <MenuItem key={name} value={name}>

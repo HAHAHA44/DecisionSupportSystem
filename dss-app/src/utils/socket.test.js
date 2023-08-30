@@ -85,9 +85,9 @@ import {
 
       console.log(data);
       expect(data).toHaveLength(2);
-      expect(data[0]).toHaveProperty('labels', [ '1970/1/20', '1970/1/20' ]);
+      expect(data[0]).toHaveProperty('labels', [ '1/20/1970', '1/20/1970' ]);
       expect(data[0]).toHaveProperty('data', [ 100, 120 ]);
-      expect(data[1]).toHaveProperty('labels', [ '1970/1/20', '1970/1/20' ]);
+      expect(data[1]).toHaveProperty('labels', [ '1/20/1970', '1/20/1970' ]);
       expect(data[0]).toHaveProperty('data', [ 100, 120 ]);
   
     });
